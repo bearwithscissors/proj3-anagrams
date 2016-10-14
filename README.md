@@ -16,7 +16,7 @@ have different anagrams.
 
 ## Authors 
 
-Initial version by M Young; to be revised by CIS 322 students. 
+Initial version by M Young; Reviewed by Wyatt Reed. 
 
 ## Status
 
@@ -38,5 +38,19 @@ version of the project you turn in.
 
 There are currently nose tests for vocab.py, letterbag.py, and jumble.py. 
 
+## How to Run the Code
+```
+  git clone  YourRepositoryURL myTestArea
+  cd myTestArea
+  bash ./configure
+  make test    # All tests should pass
+  make service # Then I test from browser on another machine
+```
 
+If you have issues with the service you can stop the service by typing the following:
+```
+ps -e | grep gunicorn #Find the PID for gunicorn
+kill -9 pid #where pid is the process id returned by the last command
+make service
 
+```

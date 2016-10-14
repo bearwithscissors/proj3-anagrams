@@ -128,7 +128,7 @@ def success():
 @app.route("/_solved")
 def solved():
     """
-    r
+    Called to issue a new page function when a word has been found
     """
     #app.logger.debug("Entering check")
 
@@ -154,7 +154,7 @@ def solved():
 @app.route("/_correct_word")
 def correct_word():
     '''
-    Used to determine if input text is ready to be checked.
+    Used to determine if input text is ready to be checked
     '''
     app.logger.debug("Entering check")
     text = request.args.get("text", type=str)

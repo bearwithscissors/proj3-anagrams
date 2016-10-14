@@ -124,14 +124,14 @@
    }
    function get_check() {
      $.getJSON('/_check', { text: txt },function(data) {
-       console.log("data: " + data)
+       //console.log("data: " + data)
        flash_string = data.result.alert;
        showFlash(flash_string);
      });
    }
    function execute_solved() {
      $.getJSON('/_solved', { text: txt },function(data) {
-       console.log("data: " + data)
+       //console.log("data: " + data)
        function_string = data.result.function;
        loadPage(function_string);
      });
@@ -139,7 +139,7 @@
 
    $.getJSON( "/_correct_word", { text: txt },function(data) {
      is_word = data.result.is_word;
-     console.log("is_word: " + is_word)
+     //console.log("is_word: " + is_word)
      get_check()
      if (is_word) {
        //$("#response").html("That's enough!");

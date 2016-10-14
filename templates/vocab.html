@@ -74,17 +74,20 @@
   </div>
   </div><div class="row">
   <div class="col-xs-6 text-center">
+    <!--TODO use session.target_count as string in flask-->
     to spell {{session.target_count}} words from the list.
   </div> <!-- col -->
 </div> <!-- row -->
 <br />
 <div class="row">
   <div class="col-xs-6 text-center">
-  <form id="entry" method="POST" action="/_check">
+  <!--TODO Replace this with JS-->
+  <!--form id="entry" method="POST" action="/_check"-->
+  <form id="entry">
     <label for="attempt">Word:</label>
     <input id="attempt" name="attempt" type="text" width="15"
       autocomplete="off"  autofocus />
-    <input type="submit" name="try" />
+    <!--input type="submit" name="try" /-->
   </form>
 </div></div>
 
@@ -94,22 +97,67 @@
 <h2>You found </h2>
 <p id="results">
   {% for match in session.matches %}
-  {{ match }} 
+  {{ match }}
   {% endfor %}
 </p>
 {% endif %}
 
-
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <!-- Mismatch, already found, etc. "flashed" from Python -->
-    {% for message in messages %}
-      <p class="message">{{ message }}</p>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
+      <p id="message">{{ message }}</p>
 
 
 
  </div> <!-- container -->
+ <script>
+ $("#entry").submit( function(event) {
+   event.preventDefault();
+  });
+
+ $("#attempt").keyup(function(event) {
+   var txt = $("#attempt").val().toLowerCase();  // Current content of the input field
+   var keycode = event.which;      // They key that just went up
+   var letter = String.fromCharCode(keycode);
+
+ //TODO use session.target_count as string in flask
+ if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter) && txt.length == 0) {
+  showFlash("");
+  return
+}
+
+   function execute_get() {
+     $.getJSON('/_check', { text: txt },function(data) {
+       console.log("data: " + data)
+       flash_string = data.result.alert;
+       showFlash(flash_string);
+     });
+   }
+  function execute_solved() {
+   $.getJSON('/_solved', { text: txt },function(data) {
+     console.log("data: " + data)
+     function_string = data.result.function;
+     showSolve(function_string);
+   });
+ }
+
+   $.getJSON( "/_correct_word", { text: txt },
+              function(data) {
+                is_word = data.result.is_word;
+                console.log("is_word: " + is_word)
+                execute_get()
+                if (is_word) {
+                   //$("#response").html("That's enough!");
+                   $("#attempt").val("");
+                   $("#message").html("");
+                   execute_solved()
+
+                }
+               }
+           );
+   });
+   function showFlash(txt) {
+    $("#message").html(txt);
+   }
+   function showSolve(txt) {
+    location.href = txt;
+   }
+ </script>
 </body> </html>

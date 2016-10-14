@@ -117,47 +117,44 @@
    var keycode = event.which;      // They key that just went up
    var letter = String.fromCharCode(keycode);
 
- //TODO use session.target_count as string in flask
- if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter) && txt.length == 0) {
-  showFlash("");
-  return
-}
-
-   function execute_get() {
+   if (! "ABCDEFGHIJKLMNOPQRSTUVWXYZ".includes(letter) && txt.length == 0) {
+     //Clear the Flash Message when no text
+     showFlash("");
+     return
+   }
+   function get_check() {
      $.getJSON('/_check', { text: txt },function(data) {
        console.log("data: " + data)
        flash_string = data.result.alert;
        showFlash(flash_string);
      });
    }
-  function execute_solved() {
-   $.getJSON('/_solved', { text: txt },function(data) {
-     console.log("data: " + data)
-     function_string = data.result.function;
-     showSolve(function_string);
-   });
- }
-
-   $.getJSON( "/_correct_word", { text: txt },
-              function(data) {
-                is_word = data.result.is_word;
-                console.log("is_word: " + is_word)
-                execute_get()
-                if (is_word) {
-                   //$("#response").html("That's enough!");
-                   $("#attempt").val("");
-                   $("#message").html("");
-                   execute_solved()
-
-                }
-               }
-           );
-   });
-   function showFlash(txt) {
-    $("#message").html(txt);
+   function execute_solved() {
+     $.getJSON('/_solved', { text: txt },function(data) {
+       console.log("data: " + data)
+       function_string = data.result.function;
+       loadPage(function_string);
+     });
    }
-   function showSolve(txt) {
-    location.href = txt;
+
+   $.getJSON( "/_correct_word", { text: txt },function(data) {
+     is_word = data.result.is_word;
+     console.log("is_word: " + is_word)
+     get_check()
+     if (is_word) {
+       //$("#response").html("That's enough!");
+       $("#attempt").val("");
+       $("#message").html("");
+       execute_solved()
+     }
    }
+ );
+});
+function showFlash(txt) {
+  $("#message").html(txt);
+}
+function loadPage(txt) {
+  location.href = txt;
+}
  </script>
 </body> </html>

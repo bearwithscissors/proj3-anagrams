@@ -50,20 +50,6 @@ def index():
   app.logger.debug("At least one seems to be set correctly")
   return flask.render_template('vocab.html')
 
-@app.route("/keep_going")
-def keep_going():
-  """
-  After initial use of index, we keep the same scrambled
-  word and try to get more matches
-  """
-  flask.g.vocab = WORDS.as_list();
-  return flask.render_template('vocab.html')
-
-
-@app.route("/success")
-def success():
-  return flask.render_template('success.html')
-
 #######################
 # Form handler.
 # CIS 322 (399se) note:
@@ -124,10 +110,25 @@ def check():
 #   These return JSON, rather than rendering pages.
 ###############
 
+@app.route("/keep_going")
+def keep_going():
+  """
+  After initial use of index, we keep the same scrambled
+  word and try to get more matches
+  """
+  flask.g.vocab = WORDS.as_list();
+  return flask.render_template('vocab.html')
+
+
+@app.route("/success")
+def success():
+  return flask.render_template('success.html')
+
+
 @app.route("/_solved")
 def solved():
     """
-    Example ajax request handler
+    r
     """
     #app.logger.debug("Entering check")
 
@@ -135,12 +136,12 @@ def solved():
     text = request.args.get("text", type=str)
     jumble = flask.session["jumble"]
     matches = flask.session.get("matches", []) # Default to empty list
+
     ## Is it good?
     in_jumble = LetterBag(jumble).contains(text)
     matched = WORDS.has(text)
-    ## Choose page:  Solved enough, or keep going?
+
     if matched and in_jumble and not (text in matches):
-    ## Cool, they found a new word
         matches.append(text)
         flask.session["matches"] = matches
     if len(matches) >= flask.session["target_count"]:
@@ -152,13 +153,15 @@ def solved():
 
 @app.route("/_correct_word")
 def correct_word():
+    '''
+    Used to determine if input text is ready to be checked.
+    '''
     app.logger.debug("Entering check")
     text = request.args.get("text", type=str)
     matches = flask.session.get("matches", []) # Default to empty list
     jumble = flask.session["jumble"]
     matched = WORDS.has(text)
     in_jumble = LetterBag(jumble).contains(text)
-
 
     if matched and in_jumble:
         is_word = True
@@ -176,17 +179,6 @@ def correct_word():
     return jsonify(result=rslt)
 
 
-#################
-# Functions used within the templates
-#################
-
-@app.template_filter( 'filt' )
-def format_filt( something ):
-    """
-    Example of a filter that can be used within
-    the Jinja2 code
-    """
-    return "Not what you asked for"
 
 ###################
 #   Error handlers
